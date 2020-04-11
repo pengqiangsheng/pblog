@@ -11,9 +11,9 @@
 ## 安装
 
 ```shell
-yarn global add pblog
+yarn global add p-blog
 or
-npm install pblog -g
+npm install p-blog -g
 ```
 
 ## 命令
