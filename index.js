@@ -101,7 +101,13 @@ module.exports = async function (userPath, isServer) {
   const config = mergeConfig(defaultConfig, userConfig)
 
   // 读取md文件目录下所有文章
-  const listPostmd = fs.readdirSync(resolve(userPath, 'post'), 'utf-8').filter(name => name.includes('.md')).map(name => name.replace(/\.md/, ''))
+  let listPostmd = []
+  try {
+    listPostmd = fs.readdirSync(resolve(userPath, 'post'), 'utf-8').filter(name => name.includes('.md')).map(name => name.replace(/\.md/, ''))
+  }catch(e) {
+    debug('抱歉，你需要在项目中新建一个post文件夹，并且写入第一篇你的文章hello.md！')
+    throw new Error(e)
+  }
 
   // 创建输出目录
   debug('清空dist')
