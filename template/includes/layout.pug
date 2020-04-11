@@ -1,0 +1,10 @@
+doctype html
+html(lang="en")
+  include head.pug
+  body
+    block content
+    block foot
+    -
+    each item in list_script
+      script(src= item)
+    block scripts

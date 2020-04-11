@@ -1,0 +1,22 @@
+extends includes/layout.pug
+
+block content
+  .markdown-body !{html}
+    .link-wrapper
+      a(href= `./${link.prev}.html`) 上一篇: #{link.prev}
+      a(href= `./${link.next}.html`) 下一篇: #{link.next}
+
+block styles
+  style.
+    .markdown-body {
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 45px;
+    }
+    .link-wrapper {
+      display: flex;
+      justify-content: space-between;
+    }
+

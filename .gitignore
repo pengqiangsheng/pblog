@@ -1,0 +1,6 @@
+node_*
+dist
+*.lock
+*.config.js
+post
+public

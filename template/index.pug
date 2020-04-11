@@ -1,0 +1,50 @@
+extends includes/layout.pug
+
+block content
+  .container
+    div #{move}
+  .header 目录
+  .doc
+    ul
+      -
+      each item, index in list_doc
+        li
+          a(href=`./${item}.html`)= `${index}-${item}`
+block styles
+  style.
+    .container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+    }
+    .header {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      background: rgb(244, 244, 245);
+    }
+    .doc {
+      position: absolute;
+      top: 200%;
+      left: 0;
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .doc > ul > li {
+      padding: 10px;
+    }

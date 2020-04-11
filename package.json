@@ -1,0 +1,33 @@
+{
+  "name": "pblog",
+  "version": "0.0.3",
+  "description": "only's test version, maybe cause many problems, but imagination is endless!",
+  "main": "index.js",
+  "scripts": {
+    "build": "./bin/marked.js",
+    "serve": "./bin/marked.js -s"
+  },
+  "bin": {
+    "pblog": "./bin/marked.js"
+  },
+  "author": "pengqiangsheng",
+  "repository": "https://github.com/pengqiangsheng/pblog",
+  "homepage": "https://github.com/pengqiangsheng/pblog",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "github-markdown-css": "^4.0.0",
+    "highlight.js": "^9.18.1",
+    "html-minifier": "^4.0.0",
+    "jstransformer-markdown-it": "^2.1.0",
+    "koa": "^2.11.0",
+    "koa-logger": "^3.2.1",
+    "koa-static": "^5.0.0",
+    "markdown": "^0.5.0",
+    "marked": "^0.8.2",
+    "pug": "^2.0.4"
+  },
+  "keywords": [
+    "blog"
+  ]
+}
