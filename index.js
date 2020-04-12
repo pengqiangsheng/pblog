@@ -150,7 +150,7 @@ module.exports = async function (userPath, isServer) {
   // 创建文章上一篇下一篇链接
   const linkMap = {}
   if(listPostmd.length) {
-    const linkList = [listPostmd[0], ...listPostmd, listPostmd[listPostmd.length-1]]
+    const linkList = [listPostmd[listPostmd.length-1], ...listPostmd, listPostmd[0]]
     for(let i = 1; i < linkList.length - 1; i++) {
       const key = linkList[i]
       linkMap[key] = {
