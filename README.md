@@ -38,7 +38,7 @@ npm install p-blog -g
 
 > 有时候，你可能需要自定义一些选项，比如网站的标题，还有一些样式或者脚本等等，它就显得必要了。
 
-你需要在项目根目录下新建一个`pblog.config.js`文件，然后使用AMD规范导出一个对象。
+你需要在项目根目录下新建一个`pblog.config.js`文件，然后使用CommonJs规范导出一个对象。
 
 ```js
 module.exports = {
