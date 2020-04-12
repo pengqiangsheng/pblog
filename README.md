@@ -53,9 +53,10 @@ module.exports = {
 // template: 自定义模板的文件夹绝对路径（首页名称为index.pug, 文章页面模板名称为post.pug）
 ```
 
-目前有5大字段可以配置哦！
+目前有6大字段可以配置哦！
 
 - title
+- logo
 - move
 - css
 - script

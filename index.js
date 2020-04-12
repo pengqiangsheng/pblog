@@ -1,3 +1,4 @@
+var begin=new Date();
 const fs = require('fs')
 const { Worker } = require('worker_threads');
 const { resolve } = require('path')
@@ -8,11 +9,11 @@ const markedWorker = new Worker(resolve(__dirname,'./markedWorker.js'));
 // worker接收数量
 let i = 0
 
-
 // 默认配置对象
 const defaultConfig = {
-  title: 'p-blog博客框架',
-  move: '黎明前的黑暗是最深不见底的黑暗',
+  title: 'Pblog博客框架',
+  logo: 'Pblog',
+  move: 'Pblog -- 基于 Node.js 平台的简约静态博客生成框架',
   css: [],
   script: [],
   template: resolve(__dirname, './template')
@@ -77,20 +78,30 @@ function delDir(path){
 }
 
 // 生成首页
-const generateIndex = (list_doc, config) => {
+const generateIndex = (config) => {
+  const marked = require('marked')
+  let readMe = null
+  try {
+    debug('尝试使用用户根目录下的：README')
+    readMe = fs.readFileSync(resolve(config.userPath, 'README.md'), 'utf-8')
+  }catch{
+    debug('没找到，启用默认首页内容：README')
+    readMe = fs.readFileSync(resolve(__dirname, 'README.md'), 'utf-8')
+  }
+  const markdownString = marked(readMe)
   const compiledFunction = pug.compileFile(resolve(config.template, 'index.pug'));
   return compiledFunction({
+    logo: config.logo,
     title: config.title,
     move: config.move,
-    list_doc: list_doc,
+    list_doc: config.listPostmd,
     list_css: config.css,
-    list_script: config.script
+    list_script: config.script,
+    markdown: markdownString
   })
 }
 
 module.exports = async function (userPath, isServer) {
-  console.time()
-
   // 合并配置对象
   let userConfig = {}
   try {
@@ -119,33 +130,21 @@ module.exports = async function (userPath, isServer) {
 
   // 接收编译结果
   markedWorker.on('message', ({name, html}) => {
-    let ws = fs.createWriteStream(resolve(userPath, `dist/${name}.html`), {
-      flags: 'w', // 如果文件不存在，则创建；如果已经有内容，则先清空。
-      encoding: 'utf8',
-      highWaterMark: 4, // 预计每次写入的字节数;默认16k
-      start: 0, // 起始写入的位置
-      autoClose: true // 写完后关闭文件
-    })
-    ws.write(html, function(err) {
+    fs.writeFile(resolve(userPath, `dist/${name}.html`), html, 'utf-8', (err) => {
       debug('生成', `dist/${name}.html`)
-      i++
-      if(i === listPostmd.length) {
-        moveDir(resolve(__dirname, `theme`), resolve(userPath, `dist/theme`))
-        if (fs.existsSync(resolve(userPath, 'public'))) {
-          moveDir(resolve(userPath, `public`), resolve(userPath, `dist`))
-        }
-        fs.writeFile(resolve(userPath, `dist/index.html`), generateIndex(listPostmd, config), 'utf-8', (err) => {
-          debug('生成主页', `dist/index.html`)
-          debug('完成')
-          if(isServer) {
-            require(resolve(__dirname,'./app.js'))(resolve(userPath, 'dist'))
-          }
-          console.timeEnd()
-        })
-        markedWorker.terminate();
+    })
+    i++
+    if(i === listPostmd.length) {
+      fs.writeFileSync(resolve(userPath, `dist/index.html`), generateIndex(config), 'utf-8')
+      debug('生成主页', `dist/index.html`)
+      if(isServer) {
+        debug('开启本地web预览服务')
+        require(resolve(__dirname,'./app.js'))(resolve(userPath, 'dist'))
       }
-    });
-    ws.end('')
+      const time = new Date() - begin
+      debug('完成! 总共耗时：%o ms', time)
+      markedWorker.terminate();
+    }
   })
 
   // 创建文章上一篇下一篇链接
@@ -161,10 +160,17 @@ module.exports = async function (userPath, isServer) {
     }
   }
 
+  config.listPostmd = listPostmd
+  config.userPath = userPath
   // 发送编译任务
   listPostmd.forEach(name => {
     debug('发送任务', name)
     markedWorker.postMessage({name, userPath, linkMap, config})
   })
+
+  moveDir(resolve(__dirname, `theme`), resolve(userPath, `dist/theme`))
+  if (fs.existsSync(resolve(userPath, 'public'))) {
+    moveDir(resolve(userPath, `public`), resolve(userPath, `dist`))
+  }
   
 }

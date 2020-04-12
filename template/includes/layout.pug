@@ -4,7 +4,114 @@ html(lang="en")
   body
     block content
     block foot
+    #menu
+      a.toggle#toggle(href='/index.html')
+        i.icon-menu#my-icon
+      ul#docUl
+        -
+        each item, index in list_doc
+          li
+            a(href=`./${item}.html`)= `${index}-${item}`
     -
     each item in list_script
       script(src= item)
     block scripts
+
+script.
+  (function(){
+    const menu = document.getElementById('toggle')
+    const ul = document.getElementById('docUl')
+    let timer = null
+    menu.addEventListener('mouseenter',() => {
+      ul.style.display = 'block'
+      clearTimeout(timer)
+    })
+    menu.addEventListener('mouseleave',() => {
+      timer = setTimeout(() => {
+        clearTimeout(timer)
+        ul.style.display = 'none'
+      }, 300)
+    })
+    ul.addEventListener('mouseenter',() => {
+      clearTimeout(timer)
+      ul.style.display = 'block'
+    })
+    ul.addEventListener('mouseleave',() => {
+      timer = setTimeout(() => {
+        clearTimeout(timer)
+        ul.style.display = 'none'
+      }, 300)
+    })
+  })()
+
+style.
+  #menu {
+    position: fixed;
+    top: 35px;
+    right: 30px;
+    z-index: 50;
+  }
+  #menu::hover {
+    cursor: pointer;
+  }
+  #menu a.toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px;
+    background: rgba(255,255,255,.9);
+    border-radius: 2px;
+    border: 1px solid transparent;
+    z-index: 5;
+  }
+  #my-icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-bottom: 3px;
+    box-sizing: border-box;
+    border-color: #111;
+    border-bottom-style: solid;
+  }
+  .icon-menu:before{
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 3px;
+    top: 0;
+    right: 0;
+    background: #111
+  }
+  .icon-menu:after{
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 3px;
+    top: 6px;
+    right: 0;
+    background: #111;
+  }
+  #menu ul {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    margin: 0;
+    border: 1px solid #efefef;
+    border-bottom: 1px solid #ddd;
+    border-radius: 2px;
+    padding: 25px;
+    background: rgba(255,255,255,.95);
+    box-shadow: 0 1px 3px 0 #eee;
+    white-space: nowrap;
+  }
+  #menu ul li {
+    list-style: none;
+    font-size: .8em;
+  }
+  #menu ul li a {
+    display: block;
+    text-decoration: none;
+    padding: 3px 0;
+  }

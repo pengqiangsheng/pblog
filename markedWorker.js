@@ -22,10 +22,11 @@ parentPort.on('message', ({name, userPath, linkMap, config}) => {
     title: config.title + '-' +name,
     html: marked(markdownString),
     list_css: config.css,
-    list_script: config.script
+    list_script: config.script,
+    list_doc: config.listPostmd
   })
   // debug('转换pug模板为html完成')
   const minifyHtml =  minify(html, {removeComments: true,collapseWhitespace: true,minifyJS:true, minifyCSS:true})
   // debug('压缩html代码完成')
-  parentPort.postMessage({name, html:minifyHtml});
+  parentPort.postMessage({name, html: minifyHtml});
 });
