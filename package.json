@@ -1,6 +1,6 @@
 {
   "name": "p-blog",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "only's test version, maybe cause many problems, but imagination is endless!",
   "main": "index.js",
   "scripts": {
