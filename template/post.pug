@@ -1,13 +1,78 @@
 extends includes/layout.pug
 
+block header
+  #lg-bg
+    .overlay
+      .page-title
+        h2 #{title}
+      .nav
+        a(href="/") 首页
+        a(href="/") 标签
+        a(href="/") 分类
+        a(href="/") 关于
+
 block content
-  .markdown-body !{html}
-    .link-wrapper
-      a(href= `./${link.prev}.html`) 上一篇: #{link.prev}
-      a(href= `./${link.next}.html`) 下一篇: #{link.next}
+  .page
+    .markdown-body !{html}
+      .link-wrapper
+        a(href= `./${link.prev}.html`) 上一篇: #{link.prev}
+        a(href= `./${link.next}.html`) 下一篇: #{link.next}
+    .sidebar
+      .catalogue
+        .title 目录
 
 block styles
   style.
+    #lg-bg {
+      position: relative;
+      height: 450px;
+      width: 100%;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 3;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+    #lg-bg > .overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      background: rgb(244, 244, 245);
+    }
+    #lg-bg .page-title {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .page-title > h2 {
+      font-size: 52px;
+      font-weight: 300;
+    }
+    .nav {
+      position: absolute;
+      bottom: 60px;
+      width: 100%;
+      text-align: center;
+    }
+    .nav > a {
+      padding: 10px;
+      color: #24292e;
+      font-weight: 300;
+      font-size: 1.5em;
+      text-decoration: none;
+    }
+    .page {
+      position: relative;
+      padding-left: 280px;
+    }
     .markdown-body {
       box-sizing: border-box;
       min-width: 200px;
@@ -18,5 +83,78 @@ block styles
     .link-wrapper {
       display: flex;
       justify-content: space-between;
+      padding-top: 16px;
+      box-sizing: border-box;
+      border-top: 1px solid #eaecef;
+    }
+    .sidebar {
+      position: absolute;
+      padding: 50px 40px;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      box-sizing: border-box;
+      border-right: 1px solid #eaecef;
+    }
+    .catalogue {
+      position: relative;
+    }
+    .catalogue > .title {
+      color: #111;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .catalogue > ul > li{
+      width: 200px;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .catalogue > ul > li > a {
+      color: #24292e;
+      text-decoration: none;
     }
 
+block scripts
+  script.
+    const debounce = (fn, delay = 16.7) => {
+      let timer = null
+      return (...args) => {
+        if(timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          clearTimeout(timer)
+          timer = null
+          fn.apply(this, args)
+        }, delay)
+      }
+    }
+    (function() {
+      const sidebar = document.querySelector('.sidebar')
+      const scrollFn = debounce(() => {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+        console.log(scrollTop)
+        if(scrollTop >= 450) {
+          sidebar.style.position = 'fixed'
+        }else {
+          sidebar.style.position = 'absolute'
+        }
+      })
+      window.onscroll = scrollFn
+      const md = document.querySelector('.markdown-body')
+      const ids = [].slice.call(md.children)
+                    .filter(item => item.id)
+                    .map(item => item.id)
+      const catalogue = document.querySelector('.catalogue')
+      const ul = document.createElement('ul')
+      ids.forEach(item => {
+        const li = document.createElement('li')
+        li.innerHTML = `<a href='#${item}'>${item}</a>`
+        ul.appendChild(li)
+      })
+      catalogue.appendChild(ul)
+    })()
