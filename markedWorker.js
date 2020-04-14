@@ -20,7 +20,7 @@ parentPort.on('message', ({name, userPath, linkMap, config}) => {
   const html = compiledFunction({
     link: linkMap[name],
     title: config.title + '-' +name,
-    html: marked(markdownString),
+    markdown: marked(markdownString),
     list_css: config.css,
     list_script: config.script,
     list_doc: config.listPostmd

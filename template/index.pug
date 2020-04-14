@@ -5,9 +5,12 @@ block content
     .container
       h1#logo #{logo}
       div#move #{move}
-  .header 介绍
-  .doc
-    .markdown-body !{markdown}
+  .header#bg 主题-百变渐变色
+  .main-body
+    .read-me
+      .markdown-body !{readme}
+    .history
+      .markdown-body !{history}
 
 block styles
   style.
@@ -39,13 +42,23 @@ block styles
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 2rem;
-      background: rgb(244, 244, 245);
+      font-size: 3rem;
+      color: white;
     }
-    .doc {
+    .main-body {
       position: absolute;
       top: 200%;
       left: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+    .read-me {
+      position: relative;
+      width: 100%;
+      min-height: 100%;
+    }
+    .history {
+      position: relative;
       width: 100%;
       min-height: 100%;
     }

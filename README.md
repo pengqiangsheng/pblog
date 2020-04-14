@@ -89,6 +89,33 @@ module.exports = {
 
 对的，物理绝对路径！！
 
+## 模板变量
+
+> 当你开始尝试自定义模板，模板变量变得尤为重要，因为这些是`pblog`提供的内容变量。
+
+post.pug:
+
+- link 链接对象
+- - prev 上一篇
+- - next 下一篇
+- title 标题
+- markdown markdown内容
+- list_css css数组
+- list_script script数组
+- list_doc 文章列表
+
+index.pug:
+
+- logo 首页显示的`Pblog`
+- move 一句话
+- readme 根目录下的`README.md`
+- history 根目录下的`history.md`
+- title
+- list_doc
+- list_css
+- list_script
+
+这些模板变量，会提供到相应的`pug`页面，你可以用一个或多个，或者一个不用，都没有问题
 
 ## 自定义主题
 

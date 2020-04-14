@@ -1,7 +1,7 @@
 extends includes/layout.pug
 
 block header
-  #lg-bg
+  .lg-bg#bg
     .overlay
       .page-title
         h2 #{title}
@@ -13,7 +13,7 @@ block header
 
 block content
   .page
-    .markdown-body !{html}
+    .markdown-body !{markdown}
       .link-wrapper
         a(href= `./${link.prev}.html`) 上一篇: #{link.prev}
         a(href= `./${link.next}.html`) 下一篇: #{link.next}
@@ -23,7 +23,7 @@ block content
 
 block styles
   style.
-    #lg-bg {
+    .lg-bg {
       position: relative;
       height: 450px;
       width: 100%;
@@ -31,20 +31,18 @@ block styles
       left: 0;
       bottom: 0;
       z-index: 3;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center center;
+      color: #fff;
     }
-    #lg-bg > .overlay {
+    .lg-bg > .overlay {
       position: absolute;
       top: 0;
       bottom: 0;
       left: 0;
       right: 0;
       z-index: 1;
-      background: rgb(244, 244, 245);
+      //- background: rgb(244, 244, 245);
     }
-    #lg-bg .page-title {
+    .lg-bg .page-title {
       position: relative;
       height: 100%;
       display: flex;
@@ -64,7 +62,8 @@ block styles
     }
     .nav > a {
       padding: 10px;
-      color: #24292e;
+      color: #fff;
+      //- color: #24292e;
       font-weight: 300;
       font-size: 1.5em;
       text-decoration: none;
@@ -119,6 +118,12 @@ block styles
       color: #24292e;
       text-decoration: none;
     }
+    .catalogue .high-light-doc {
+      color: #0366d6;
+    }
+    .high-light-doc a{
+      color: #0366d6!important;
+    }
 
 block scripts
   script.
@@ -134,27 +139,60 @@ block scripts
       }
     }
     (function() {
+      const bgHeight = 450
       const sidebar = document.querySelector('.sidebar')
+      const md = document.querySelector('.markdown-body')
+      const ids = [].slice.call(md.children)
+                    .filter(item => item.id)
+      const catalogue = document.querySelector('.catalogue')
+      const ul = document.createElement('ul')
+      ids.forEach(({id}, index) => {
+        const li = document.createElement('li')
+        li.innerHTML = `<a href='#${id}'>${id}</a>`
+        ul.appendChild(li)
+      })
+      catalogue.appendChild(ul)
+
+      // 可视区高度
+      const clientHeight = document.documentElement.clientHeight
+      // 元素离浏览器的高度集合
+      const idsOffsetTop = ids.map(item => item.offsetTop)
+      console.log(idsOffsetTop)
+      console.log(clientHeight)
       const scrollFn = debounce(() => {
         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
         console.log(scrollTop)
-        if(scrollTop >= 450) {
+        console.log(idsOffsetTop)
+        if(scrollTop >= bgHeight) {
           sidebar.style.position = 'fixed'
         }else {
           sidebar.style.position = 'absolute'
         }
+        let index = 0;
+        // 高亮当前元素
+        for(let i = idsOffsetTop.length - 1; i >= 0; i--) {
+          const offsetTop = idsOffsetTop[i]
+          if(offsetTop + bgHeight <= scrollTop) {
+            console.log('元素', i, '出现在视野里')
+            index = i
+            break
+          }
+        }
+        for(let i = ul.children.length - 1; i >= 0; i--) {
+          const curLi = ul.children[i]
+          curLi.className = ''
+        }
+        const curLi = ul.children[index]
+        curLi.classList.add('high-light-doc')
       })
+      //- ul.addEventListener('click', function(e) {
+      //-   setTimeout(() => {
+      //-     for(let i = ul.children.length - 1; i >= 0; i--) {
+      //-       const curLi = ul.children[i]
+      //-       curLi.className = ''
+      //-     }
+      //-     e.target.classList.add('high-light-doc')
+      //-   }, 100)
+      //- })
       window.onscroll = scrollFn
-      const md = document.querySelector('.markdown-body')
-      const ids = [].slice.call(md.children)
-                    .filter(item => item.id)
-                    .map(item => item.id)
-      const catalogue = document.querySelector('.catalogue')
-      const ul = document.createElement('ul')
-      ids.forEach(item => {
-        const li = document.createElement('li')
-        li.innerHTML = `<a href='#${item}'>${item}</a>`
-        ul.appendChild(li)
-      })
-      catalogue.appendChild(ul)
     })()

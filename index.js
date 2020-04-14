@@ -24,6 +24,7 @@ const mergeConfig = (defaultConfig, userConfig) => {
   const config = Object.assign(defaultConfig, userConfig)
   config.css.unshift('./theme/css/highlight.css')
   config.css.unshift('./theme/css/markdown.css')
+  config.script.unshift('./theme/js/index.js')
   return config
 }
 
@@ -80,15 +81,24 @@ function delDir(path){
 // 生成首页
 const generateIndex = (config) => {
   const marked = require('marked')
-  let readMe = null
+  let readme = null
+  let history = null
   try {
-    debug('尝试使用用户根目录下的：README')
-    readMe = fs.readFileSync(resolve(config.userPath, 'README.md'), 'utf-8')
+    debug('尝试使用用户根目录下的：README.md')
+    readme = fs.readFileSync(resolve(config.userPath, 'README.md'), 'utf-8')
   }catch{
-    debug('没找到，启用默认首页内容：README')
-    readMe = fs.readFileSync(resolve(__dirname, 'README.md'), 'utf-8')
+    debug('没找到，启用默认首页内容：README.md')
+    readme = fs.readFileSync(resolve(__dirname, 'README.md'), 'utf-8')
   }
-  const markdownString = marked(readMe)
+  try {
+    debug('尝试使用用户根目录下的：history.md')
+    history = fs.readFileSync(resolve(config.userPath, 'history.md'), 'utf-8')
+  }catch{
+    debug('没找到，启用默认首页内容：history.md')
+    history = fs.readFileSync(resolve(__dirname, 'history.md'), 'utf-8')
+  }
+  const readmeString = marked(readme)
+  const historyString = marked(history)
   const compiledFunction = pug.compileFile(resolve(config.template, 'index.pug'));
   return compiledFunction({
     logo: config.logo,
@@ -97,7 +107,8 @@ const generateIndex = (config) => {
     list_doc: config.listPostmd,
     list_css: config.css,
     list_script: config.script,
-    markdown: markdownString
+    readme: readmeString,
+    history: historyString
   })
 }
 
